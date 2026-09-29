@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<books>
+    <book category="web">
+        <title>Lap trinh Web</title>
+        <author>Nguyen Van A</author>
+        <year>2025</year>
+        <price>45.00</price>
+    </book>
+    <book category="database">
+        <title>Co so du lieu</title>
+        <author>Tran Van B</author>
+        <year>2024</year>
+        <price>25.00</price>
+    </book>
+    <book category="xml">
+        <title>XML va ung dung</title>
+        <author>Le Van C</author>
+        <year>2025</year>
+        <price>35.50</price>
+    </book>
+    <book category="javascript">
+        <title>JavaScript co ban</title>
+        <author>Pham Van D</author>
+        <year>2023</year>
+        <price>20.00</price>
+    </book>
+</books>

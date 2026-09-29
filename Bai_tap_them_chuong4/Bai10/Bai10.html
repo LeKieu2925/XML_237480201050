@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 10</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 700px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: lightgray;
+        }
+        input {
+            width: 300px;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Danh sách nhân viên</h2>
+    <!-- O tim kiem -->
+    <input
+        type="text"
+        id="timkiem"
+        placeholder="Nhập tên đơn vị..."
+        onkeyup="locNhanVien()"
+    >
+    <!-- Bang nhan vien -->
+    <table>
+
+        <thead>
+            <tr>
+                <th>Mã NV</th>
+                <th>Họ tên</th>
+                <th>Đơn vị</th>
+                <th>Lương</th>
+            </tr>
+        </thead>
+
+        <tbody id="danhsach">
+        </tbody>
+    </table>
+    <script>
+        // Bien luu danh sach nhan vien
+        var danhSachNhanVien = [];
+        // Doc file XML
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+
+                // Lay cay DOM XML
+                var xmlDoc = this.responseXML;
+
+                // Lay tat ca nhan vien
+                var nhanviens =
+                    xmlDoc.getElementsByTagName("nhanvien");
+
+                // Duyet danh sach nhan vien
+                for (var i = 0; i < nhanviens.length; i++) {
+
+                    var manv =
+                        nhanviens[i]
+                        .getElementsByTagName("manv")[0]
+                        .textContent;
+
+                    var hoten =
+                        nhanviens[i]
+                        .getElementsByTagName("hoten")[0]
+                        .textContent;
+
+                    var donvi =
+                        nhanviens[i]
+                        .getElementsByTagName("donvi")[0]
+                        .textContent;
+
+                    var luong =
+                        nhanviens[i]
+                        .getElementsByTagName("luong")[0]
+                        .textContent;
+
+                    // Luu vao danh sach
+                    danhSachNhanVien.push({
+                        manv: manv,
+                        hoten: hoten,
+                        donvi: donvi,
+                        luong: luong
+                    });
+                }
+                // Hien thi toan bo nhan vien
+                hienThiNhanVien(danhSachNhanVien);
+            }
+        };
+        // Mo file XML
+        xhttp.open("GET", "danhsachnhanvien.xml", true);
+        // Gui yeu cau
+        xhttp.send();
+        // Ham hien thi nhan vien
+        function hienThiNhanVien(danhSach) {
+            var tbody =
+                document.getElementById("danhsach");
+            // Xoa noi dung cu
+            tbody.innerHTML = "";
+            // Duyet danh sach
+            for (var i = 0; i < danhSach.length; i++) {
+                var row = tbody.insertRow();
+                row.insertCell(0).textContent =
+                    danhSach[i].manv;
+                row.insertCell(1).textContent =
+                    danhSach[i].hoten;
+                row.insertCell(2).textContent =
+                    danhSach[i].donvi;
+                row.insertCell(3).textContent =
+                    danhSach[i].luong;
+            }
+        }
+        // Ham loc nhan vien theo don vi
+        function locNhanVien() {
+            // Lay tu khoa tim kiem
+            var tuKhoa =
+                document.getElementById("timkiem")
+                .value
+                .toLowerCase();
+            var ketQua = [];
+            // Duyet danh sach
+            for (var i = 0; i < danhSachNhanVien.length; i++) {
+                var donvi =
+                    danhSachNhanVien[i]
+                    .donvi
+                    .toLowerCase();
+                // Kiem tra don vi
+                if (donvi.includes(tuKhoa)) {
+                    ketQua.push(danhSachNhanVien[i]);
+                }
+            }
+            hienThiNhanVien(ketQua);
+        }
+    </script>
+</body>
+</html>

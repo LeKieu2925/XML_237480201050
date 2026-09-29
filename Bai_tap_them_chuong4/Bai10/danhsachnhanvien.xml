@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<danhsach>
+    <nhanvien>
+        <manv>001</manv>
+        <hoten>Nguyen Van A</hoten>
+        <donvi>Ke toan</donvi>
+        <luong>10000000</luong>
+    </nhanvien>
+    <nhanvien>
+        <manv>002</manv>
+        <hoten>Tran Thi B</hoten>
+        <donvi>Ky thuat</donvi>
+        <luong>12000000</luong>
+    </nhanvien>
+    <nhanvien>
+        <manv>003</manv>
+        <hoten>Le Van C</hoten>
+        <donvi>Hanh chinh</donvi>
+        <luong>9000000</luong>
+    </nhanvien>
+    <nhanvien>
+        <manv>004</manv>
+        <hoten>Pham Thi D</hoten>
+        <donvi>Ky thuat</donvi>
+        <luong>15000000</luong>
+    </nhanvien>
+    <nhanvien>
+        <manv>005</manv>
+        <hoten>Hoang Thi E</hoten>
+        <donvi>Hanh chinh</donvi>
+        <luong>11000000</luong>
+    </nhanvien>
+</danhsach>

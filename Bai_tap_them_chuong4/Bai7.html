@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 7</title>
+</head>
+<body>
+    <h2>Danh sách cửa hàng sách</h2>
+    <pre id="result"></pre>
+    <script>
+        // Chuoi XML ban dau
+        var xmlString = `
+<bookstore>
+    <book>
+        <title>Lap trinh Web</title>
+        <price>25.00</price>
+    </book>
+
+    <book>
+        <title>Co so du lieu</title>
+        <price>30.00</price>
+    </book>
+</bookstore>`;
+        // Tao DOMParser
+        var parser = new DOMParser();
+        // Chuyen chuoi XML thanh XML DOM
+        var xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        // Lay nut goc bookstore
+        var bookstore = xmlDoc.getElementsByTagName("bookstore")[0];
+        // Tao nut book moi
+        var newBook = xmlDoc.createElement("book");
+        // Tao nut title
+        var newTitle = xmlDoc.createElement("title");
+        newTitle.textContent = "XML va ung dung";
+        // Tao nut price
+        var newPrice = xmlDoc.createElement("price");
+        newPrice.textContent = "40.00";
+        // Them title vao book
+        newBook.appendChild(newTitle);
+        // Them price vao book
+        newBook.appendChild(newPrice);
+        // Them book moi vao cuoi bookstore
+        bookstore.appendChild(newBook);
+        // Hien thi XML
+        document.getElementById("result").textContent =
+            new XMLSerializer().serializeToString(xmlDoc);
+
+    </script>
+
+</body>
+</html>

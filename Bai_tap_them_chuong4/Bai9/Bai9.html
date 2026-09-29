@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 9</title>
+</head>
+<body>
+    <h2>Danh sách lương sau khi cập nhật</h2>
+    <div id="result"></div>
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var xmlDoc = this.responseXML;
+                var nhanviens =
+                    xmlDoc.getElementsByTagName("nhanvien");
+                var result = "";
+                // Duyet danh sach nhan vien
+                for (var i = 0; i < nhanviens.length; i++) {
+                    var manv =
+                        nhanviens[i]
+                        .getElementsByTagName("manv")[0]
+                        .textContent;
+                    var hoten =
+                        nhanviens[i]
+                        .getElementsByTagName("hoten")[0]
+                        .textContent;
+                    var donvi =
+                        nhanviens[i]
+                        .getElementsByTagName("donvi")[0]
+                        .textContent;
+                    var luong =
+                        nhanviens[i]
+                        .getElementsByTagName("luong")[0];
+                    var giaLuong =
+                        parseFloat(luong.firstChild.nodeValue);
+                    // Neu la don vi Ky thuat thi tang 10%
+                    if (donvi == "Ky thuat") {
+                        giaLuong = Math.round(giaLuong * 1.10);
+                        // Cap nhat nodeValue
+                        luong.firstChild.nodeValue = giaLuong;
+                    }
+                    // Tao danh sach hien thi
+                    result +=
+                        "Ma NV: " + manv + "<br>" +
+                        "Ho ten: " + hoten + "<br>" +
+                        "Don vi: " + donvi + "<br>" +
+                        "Luong: " + giaLuong + "<br><br>";
+                }
+
+                document.getElementById("result").innerHTML = result;
+            }
+        };
+        xhttp.open("GET", "danhsachnhanvien.xml", true);
+        xhttp.send();
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 6</title>
+</head>
+<body>
+    <h2>Đơn vị của nhân viên có mã 002</h2>
+    <div id="result"></div>
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Lay tat ca cac nut manv
+                var manv = this.responseXML.getElementsByTagName("manv");
+                // Duyet qua tung manv
+                for (var i = 0; i < manv.length; i++) {
+                    // Kiem tra ma nhan vien
+                    if (manv[i].textContent == "002") {
+                        // Lay nut cha nhanvien
+                        var nhanvien = manv[i].parentNode;
+                        // Lay donvi
+                        var donvi = nhanvien
+                            .getElementsByTagName("donvi")[0]
+                            .textContent;
+                        // Hien thi ket qua
+                        document.getElementById("result").innerHTML =
+                            "Đơn vị: " + donvi;
+                    }
+                }
+            }
+        };
+        xhttp.open("GET", "danhsachnhanvien.xml", true);
+        xhttp.send();
+    </script>
+</body>
+</html>

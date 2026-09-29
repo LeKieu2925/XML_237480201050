@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<danhsach>
+    <nhanvien>
+        <manv>001</manv>
+        <hoten>Nguyen Van A</hoten>
+        <donvi>Phong Ke Toan</donvi>
+    </nhanvien>
+    <nhanvien>
+        <manv>002</manv>
+        <hoten>Tran Thi B</hoten>
+        <donvi>Phong Ky Thuat</donvi>
+    </nhanvien>
+    <nhanvien>
+        <manv>003</manv>
+        <hoten>Le Van C</hoten>
+        <donvi>Phong Hanh Chinh</donvi>
+    </nhanvien>
+</danhsach>

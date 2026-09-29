@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 8</title>
+</head>
+<body>
+
+    <h2>Danh sách nhân viên sau khi xóa</h2>
+
+    <pre id="result"></pre>
+
+    <script>
+
+        // Ham tim nhan vien co ma 001
+        function xoaNhanVien(xmlDoc) {
+
+            // Lay nut goc danhsach
+            var danhsach =
+                xmlDoc.getElementsByTagName("danhsach")[0];
+
+            // Lay tat ca nhan vien
+            var nhanviens =
+                xmlDoc.getElementsByTagName("nhanvien");
+
+            // Tim nhan vien co ma 001
+            for (var i = 0; i < nhanviens.length; i++) {
+
+                var manv =
+                    nhanviens[i]
+                    .getElementsByTagName("manv")[0]
+                    .textContent;
+
+                if (manv == "001") {
+
+                    // Xoa nhan vien khoi danhsach
+                    danhsach.removeChild(nhanviens[i]);
+
+                    break;
+                }
+            }
+        }
+
+        // Doc file XML
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+
+            if (this.readyState == 4 && this.status == 200) {
+
+                // Lay cay DOM tu file XML
+                var xmlDoc = this.responseXML;
+
+                // Goi ham xoa nhan vien
+                xoaNhanVien(xmlDoc);
+
+                // Hien thi XML sau khi xoa
+                var result =
+                    new XMLSerializer()
+                    .serializeToString(xmlDoc);
+
+                document.getElementById("result").textContent = result;
+            }
+        };
+
+        // Mo file XML
+        xhttp.open("GET", "danhsachnhanvien.xml", true);
+
+        // Gui yeu cau
+        xhttp.send();
+
+    </script>
+
+</body>
+</html>

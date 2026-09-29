@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 5</title>
+</head>
+<body>
+    <h2>Danh sách thể loại sách</h2>
+    <div id="result"></div>
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var books = this.responseXML.getElementsByTagName("book");
+                var result = "";
+                for (var i = 0; i < books.length; i++) {
+                    var category = books[i].getAttribute("category");
+                    result += (i + 1) + ". " + category + "<br>";
+                }
+                document.getElementById("result").innerHTML = result;
+            }
+        };
+        xhttp.open("GET", "book5.xml", true);
+        xhttp.send();
+    </script>
+</body>
+</html>
