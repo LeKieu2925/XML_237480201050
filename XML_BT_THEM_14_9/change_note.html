@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đọc XML</title>
+</head>
+
+<body>
+
+<h2>Kết quả:</h2>
+<p id="demo">Đang tải...</p>
+
+<script>
+var xhttp = new XMLHttpRequest();
+
+xhttp.onreadystatechange = function() {
+
+    if (this.readyState == 4) {
+
+        if (this.status == 200) {
+            myFunction(this);
+        } else {
+            document.getElementById("demo").innerHTML =
+                "Không thể đọc file menu.xml";
+        }
+
+    }
+};
+
+xhttp.open("GET", "menu.xml", true);
+xhttp.send();
+
+
+function myFunction(xml) {
+
+    var xmlDoc = xml.responseXML;
+
+    if (!xmlDoc) {
+        document.getElementById("demo").innerHTML =
+            "XML không hợp lệ!";
+        return;
+    }
+
+    var x = xmlDoc.getElementsByTagName("tenmom")[0];
+
+    if (!x) {
+        document.getElementById("demo").innerHTML =
+            "Không tìm thấy thẻ tenmom!";
+        return;
+    }
+
+    var text = x.childNodes[0];
+
+    var txt = text.nodeValue + "<br>";
+
+    text.nodeValue = "tenmon";
+
+    txt += text.nodeValue;
+
+    document.getElementById("demo").innerHTML = txt;
+}
+</script>
+
+</body>
+</html>

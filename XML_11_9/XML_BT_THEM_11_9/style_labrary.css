@@ -1,0 +1,107 @@
+library {
+    display: block;
+    width: 80%;
+    margin: 30px auto;
+    padding: 20px;
+    font-family: Arial;
+    background: #f2f6fc;
+}
+
+library::before {
+    content: "HỆ THỐNG QUẢN LÝ THƯ VIỆN";
+    display: block;
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+    color: #1d4ed8;
+    margin-bottom: 25px;
+}
+
+danhmuc {
+    display: block;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: white;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+}
+
+tendanhmuc {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 15px;
+}
+
+sach {
+    display: block;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+tuade {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+isbn,
+namxuatban,
+nhaxuatban,
+ngonngu {
+    display: block;
+    margin: 6px;
+}
+
+isbn::before {
+    content: "Mã ISBN: ";
+    font-weight: bold;
+}
+
+namxuatban::before {
+    content: "Năm xuất bản: ";
+    font-weight: bold;
+}
+
+nhaxuatban::before {
+    content: "Nhà xuất bản: ";
+    font-weight: bold;
+}
+
+ngonngu::before {
+    content: "Ngôn ngữ: ";
+    font-weight: bold;
+}
+
+dstg {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    background: #e8f1ff;
+}
+
+dstg::before {
+    content: "Tác giả: ";
+    font-weight: bold;
+}
+
+tg {
+    margin-right: 15px;
+    color: #1d4ed8;
+}
+
+vitrisach {
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    background: #e8f8ee;
+}
+
+vitrisach::before {
+    content: "Vị trí: ";
+    font-weight: bold;
+}

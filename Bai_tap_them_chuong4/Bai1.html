@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 1 - DOMParser</title>
+</head>
+<body>
+    <h2>Bài 1: Tải chuỗi XML và kiểm tra tên nút</h2>
+    <p id="root"></p>
+    <p id="child"></p>
+    <script>
+        // Chuoi XML
+        const xmlString = `
+            <class>
+                <student>
+                    <name>Nguyen Van A</name>
+                    <age>20</age>
+                </student>
+            </class>
+        `;
+        // Tao DOMParser
+        const parser = new DOMParser();
+        // Chuyen chuoi XML thanh XML DOM
+        const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        // Lay nut goc
+        const rootNode = xmlDoc.documentElement;
+        // Lay nut con dau tien
+        const firstChild = rootNode.firstElementChild;
+        // In ten nut goc
+        document.getElementById("root").innerHTML =
+            "Tên nút gốc: " + rootNode.nodeName;
+        // In ten the cua nut con dau tien
+        document.getElementById("child").innerHTML =
+            "Tên thẻ nút con đầu tiên: " + firstChild.nodeName;
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<danhsach>
+    <nhanvien>
+        <manv> 001 </manv>
+        <hoTen> Nguyễn Văn A </hoTen>
+        <donvi> Hành chính </donvi>
+        <luong> 500000000 </luong>
+    </nhanvien>
+    
+    <nhanvien>
+        <manv> 002 </manv>
+        <hoTen> Nguyễn Văn B </hoTen>
+        <donvi> Kỹ thuật </donvi>
+        <luong> 10 </luong>
+    </nhanvien>
+
+    <nhanvien>
+        <manv> 003 </manv>
+        <hoTen> Nguyễn Văn C </hoTen>
+        <donvi> Tổ chức </donvi>
+        <luong> 5000000 </luong>
+    </nhanvien>
+</danhsach>

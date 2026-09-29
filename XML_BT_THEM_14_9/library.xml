@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="style_labrary.css"?>
+<library>
+    <danhmuc id="k01">
+        <tendanhmuc>Công nghệ thông tin</tendanhmuc>
+        <sach id="k011">
+            <isbn>123456789</isbn>
+            <tuade>Lập trình XML và Ứng dụng</tuade>
+            <dstg>
+                <tg>Nguyễn Văn A</tg>
+                <tg>Nguyễn Văn B</tg>
+            </dstg>
+            <namxuatban>2024</namxuatban>
+            <nhaxuatban>Nhà xuất bản giáo dục</nhaxuatban>
+            <ngonngu>Tiếng Việt</ngonngu>
+            <vitrisach>
+                <khuvuc>A</khuvuc>
+                <ke>Kệ 1</ke>
+                <tang>Tầng 2</tang>
+            </vitrisach>
+        </sach>
+    </danhmuc>
+    <danhmuc id="k02">
+        <tendanhmuc>Kỹ thuật và Công nghệ</tendanhmuc>
+        <sach id="k021">
+            <isbn>1234567890</isbn>
+            <tuade>Lắp ráp và cài đặ</tuade>
+            <dstg>
+                <tg>Nguyễn Văn C</tg>
+                <tg>Nguyễn Văn D</tg>
+            </dstg>
+            <namxuatban>2025</namxuatban>
+            <nhaxuatban>Nhà xuất bản giáo dục</nhaxuatban>
+            <ngonngu>Tiếng Việt</ngonngu>
+            <vitrisach>
+                <khuvuc>B</khuvuc>
+                <ke>Kệ 2</ke>
+                <tang>Tầng 1</tang>
+            </vitrisach>
+        </sach>
+    </danhmuc>
+</library>

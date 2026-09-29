@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="style_menu.css"?>
+<menu>
+    <mon id="micay">
+        <tenmom>Mi cay</tenmom>
+        <danhmuc>Mon chinh</danhmuc>
+        <giatien>45000 vnd</giatien>
+        <mota>Có mì, có rau, có hải sản</mota>
+        <trangthai>Con hang</trangthai>
+    </mon>
+    <mon id="garan">
+        <tenmom>Gà rán</tenmom>
+        <danhmuc>Món chính</danhmuc>
+        <giatien>45000 vnd</giatien>
+        <mota>Có gà chiên dầu, ngon</mota>
+        <trangthai>Còn hàng</trangthai>
+    </mon>
+    <mon id="bundau">
+        <tenmom>Bún đậu mắm tôm</tenmom>
+        <danhmuc>Món chính</danhmuc>
+        <giatien>45000 vnd</giatien>
+        <mota>Có bún, có rau, có chả, có tàu hủ</mota>
+        <trangthai>Hết hàng</trangthai>
+    </mon>
+    <mon id="bunnuocleo">
+        <tenmom>Bún nước lèo</tenmom>
+        <danhmuc>Món chính</danhmuc>
+        <giatien>45000 vnd</giatien>
+        <mota>Có bún, có rau</mota>
+        <trangthai>Còn hàng</trangthai>
+    </mon>
+    <mon id="bunreu">
+        <tenmom>Bún rêu</tenmom>
+        <danhmuc>Món chính</danhmuc>
+        <giatien>45000 vnd</giatien>
+        <mota>Có bún, có rau, có cua, có chả</mota>
+        <trangthai>Còn hàng</trangthai>
+    </mon>
+</menu>

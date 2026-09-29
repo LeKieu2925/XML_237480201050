@@ -1,0 +1,65 @@
+menu {
+    display: block;
+    width: 80%;
+    margin: 30px auto;
+    font-family: Arial, sans-serif;
+    background-color: #fff8f0;
+    padding: 30px;
+}
+
+mon {
+    display: block;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 10px #ccc;
+}
+
+mon:hover {
+    background-color: #fff3e0;
+}
+
+tenmom {
+    display: block;
+    font-size: 25px;
+    font-weight: bold;
+    color: #e65100;
+    margin-bottom: 10px;
+}
+
+danhmuc {
+    display: block;
+    color: #777;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+giatien {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    color: #d32f2f;
+    margin-bottom: 10px;
+}
+
+mota {
+    display: block;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+trangthai {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 15px;
+    background-color: #d4edda;
+    color: #155724;
+    font-weight: bold;
+}
+
+mon[id="bundau"] trangthai {
+    background-color: #f8d7da;
+    color: #721c24;
+}

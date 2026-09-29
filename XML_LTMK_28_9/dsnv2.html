@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<body>
+    <h2>Danh sách các đơn vị:</h2>
+    <div id="demo"></div>
+
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                hienThiDonVi(xhttp);
+            }
+        };
+        xhttp.open("GET", "danhsachnhanvien.xml", true);
+        xhttp.send();
+        
+        function hienThiDonVi(xml) {
+            var xmlDoc = xml.responseXML;
+            // Lấy tất cả các thẻ đơn vị
+            var donViList = xmlDoc.getElementsByTagName("donvi");
+            var text = "<ul>"; 
+            // Duyệt qua từng thẻ đơn vị để lấy nội dung
+            for (var i = 0; i < donViList.length; i++) {
+                text += "<li>" + donViList[i].childNodes[0].nodeValue.trim() + "</li>";
+            }
+            text += "</ul>";
+            document.getElementById("demo").innerHTML = text;
+        }
+    </script>
+</body>
+</html>

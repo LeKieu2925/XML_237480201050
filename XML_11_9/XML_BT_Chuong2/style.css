@@ -1,0 +1,23 @@
+persons {
+    display: block;
+    width: 600px;
+    margin: 30px auto;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+person {
+    display: block;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #327a24;
+    border-radius: 10px;
+    background-color: hsl(187, 43%, 43%);
+}
+
+name,
+date,
+city {
+    display: block;
+    margin: 8px;
+    font-size: 18px;
+}
