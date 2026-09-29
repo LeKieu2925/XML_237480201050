@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 4</title>
+</head>
+<body>
+    <h2>Sách có giá lớn hơn 30.00</h2>
+    <div id="result"></div>
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // Lay tat ca cac sach
+                var books = this.responseXML.getElementsByTagName("book");
+                var result = "";
+                // Duyet qua tung cuon sach
+                for (var i = 0; i < books.length; i++) {
+                    // Lay gia sach
+                    var price = parseFloat(
+                        books[i].getElementsByTagName("price")[0].textContent
+                    );
+                    // Kiem tra gia lon hon 30
+                    if (price > 30.00) {
+                        // Lay tieu de sach
+                        var title = books[i]
+                            .getElementsByTagName("title")[0]
+                            .textContent;
+
+                        result += title + "<br>";
+                    }
+                }
+                document.getElementById("result").innerHTML = result;
+            }
+        };
+        xhttp.open("GET", "book4.xml", true);
+        xhttp.send();
+    </script>
+
+</body>
+</html>

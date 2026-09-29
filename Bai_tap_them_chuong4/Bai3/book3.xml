@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<books>
+    <book>
+        <title>Lap trinh Web</title>
+        <author>Nguyen Van A</author>
+        <year>2025</year>
+        <price>150000</price>
+    </book>
+</books>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bài 2</title>
+</head>
+<body>
+    <h2>Danh sách tiêu đề sách</h2>
+    <div id="result"></div>
+    <script>
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var titles = this.responseXML.getElementsByTagName("title");
+                var result = "";
+                for (var i = 0; i < titles.length; i++) {
+                    result += (i + 1) + ". ";
+                    result += titles[i].childNodes[0].nodeValue;
+                    result += "<br>";
+                }
+                document.getElementById("result").innerHTML = result;
+            }
+        };
+        // Tai file book.xml
+        xhttp.open("GET", "book.xml", true);
+        // Gui yeu cau
+        xhttp.send();
+    </script>
+</body>
+</html>

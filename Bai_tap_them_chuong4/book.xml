@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<books>
+    <book>
+        <title>Lap trinh Web</title>
+    </book>
+    <book>
+        <title>Co so du lieu</title>
+    </book>
+    <book>
+        <title>XML va ung dung</title>
+    </book>
+    <book>
+        <title>JavaScript co ban</title>
+    </book>
+</books>
