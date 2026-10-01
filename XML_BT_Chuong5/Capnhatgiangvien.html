@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cập nhật giảng viên</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #ddd;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>CẬP NHẬT THÔNG TIN GIẢNG VIÊN</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Họ tên giảng viên</th>
+                <th>Ngành</th>
+                <th>Đơn vị</th>
+            </tr>
+        </thead>
+        <tbody id="dsGiangVien">
+        </tbody>
+    </table>
+<script>
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "hosogiangvien.xml", true);
+    // Xu ly khi doc xong XML
+    xhr.onload = function() {
+        if (xhr.status == 200) {
+            // Chuyen XML thanh cay DOM
+            var xml = xhr.responseXML;
+            // Lay tat ca cac the giangvien
+            var giangviens = xml.getElementsByTagName("giangvien");
+            // Cap nhat don vi cho Pham Thi Loan
+            for (var i = 0; i < giangviens.length; i++) {
+                var hoten = giangviens[i].getElementsByTagName("hoten")[0].textContent.trim();
+                if (hoten == "Phạm Thị Loan") {
+                    giangviens[i]
+                        .getElementsByTagName("donvi")[0]
+                        .textContent = "Cơ bản";
+                }
+            }
+            // Lay vi tri bang
+            var table = document.getElementById("dsGiangVien");
+            // Hien thi danh sach sau khi cap nhat
+            for (var i = 0; i < giangviens.length; i++) {
+                var hoten = giangviens[i].getElementsByTagName("hoten")[0].textContent.trim();
+                var nganh = giangviens[i].getElementsByTagName("nganh")[0].textContent.trim();
+                var donvi = giangviens[i].getElementsByTagName("donvi")[0].textContent.trim();
+                var row = table.insertRow();
+                row.insertCell(0).textContent = i + 1;
+                row.insertCell(1).textContent = hoten;
+                row.insertCell(2).textContent = nganh;
+                row.insertCell(3).textContent = donvi;
+            }
+        }
+    };
+    xhr.send();
+</script>
+</body>
+</html>

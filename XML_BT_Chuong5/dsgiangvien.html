@@ -1,0 +1,70 @@
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách Giảng viên</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #ddd;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>DANH SÁCH GIẢNG VIÊN</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Họ tên giảng viên</th>
+                <th>Ngành</th>
+                <th>Đơn vị</th>
+            </tr>
+        </thead>
+        <tbody id="dsGiangVien">
+        </tbody>
+    </table>
+    <script>
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "hosogiangvien.xml", true);
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                // Chuyen doi noi dung XML thanh cay DOM
+                var xml = xhr.responseXML;
+                // Lay tat ca cac the subject
+                var giangvien = xml.getElementsByTagName("giangvien");
+                // Lay vi tri bang
+                var table = document.getElementById("dsGiangVien");
+                // Duyet tung mon hoc
+                for (var i = 0; i < giangvien.length; i++) {
+                    var hoten = giangvien[i].getElementsByTagName("hoten")[0].textContent.trim();
+                    var nganh = giangvien[i].getElementsByTagName("nganh")[0].textContent.trim();
+                    var donvi = giangvien[i].getElementsByTagName("donvi")[0].textContent.trim();
+                    // Tao mot dong
+                    var row = table.insertRow();
+                    // Them cac cot
+                    row.insertCell(0).textContent = i + 1;
+                    row.insertCell(1).textContent = hoten;
+                    row.insertCell(2).textContent = nganh;
+                    row.insertCell(3).textContent = donvi;
+                }
+            }
+        };
+        xhr.send();
+    </script>
+</body>
+</html>

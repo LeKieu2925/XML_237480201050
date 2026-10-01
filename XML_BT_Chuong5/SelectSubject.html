@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Môn học - Minh Khai</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #ddd;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2>DANH SÁCH MÔN HỌC CỦA NHÀ XUẤT BẢN MINH KHAI</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên môn học</th>
+                <th>Nhà xuất bản</th>
+                <th>Tác giả</th>
+            </tr>
+        </thead>
+        <tbody id="dsMonHoc">
+        </tbody>
+    </table>
+    <script>
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "dsmonhoc.xml", true);
+        // Xu ly khi doc xong XML
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                // Chuyen XML thanh cay DOM
+                var xml = xhr.responseXML;
+                // Lay tat ca cac subject
+                var subjects = xml.getElementsByTagName("subject");
+                // Lay vi tri bang
+                var table = document.getElementById("dsMonHoc");
+                var stt = 1;
+                // Duyet tung subject
+                for (var i = 0; i < subjects.length; i++) {
+                    var title = subjects[i].getElementsByTagName("title")[0].textContent.trim();
+                    var publisher = subjects[i].getElementsByTagName("publisher")[0].textContent.trim();
+                    var author = subjects[i].getElementsByTagName("author")[0].textContent.trim();
+                    // Chi hien thi mon hoc cua Minh Khai
+                    if (publisher == "Minh Khai") {
+                        var row = table.insertRow();
+                        row.insertCell(0).textContent = stt;
+                        row.insertCell(1).textContent = title;
+                        row.insertCell(2).textContent = publisher;
+                        row.insertCell(3).textContent = author;
+                        stt++;
+                    }
+                }
+            }
+        };
+        // Gui yeu cau doc XML
+        xhr.send();
+    </script>
+</body>
+</html>
