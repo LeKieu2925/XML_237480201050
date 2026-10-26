@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<employee>
+    <fname>Huynh</fname>
+    <lname>Tuan</lname>
+    <home>Bac Lieu </home>
+    <expertise name = "Python"/>
+    <expertise name = "Javascript"/>
+    <expertise name = "PHP"/>
+</employee>

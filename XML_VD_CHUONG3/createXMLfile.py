@@ -1,0 +1,33 @@
+from xml.dom import minidom
+root = minidom.Document()
+data = root.createElement('data')
+root.appendChild(data)
+items = root.createElement('items')
+data.appendChild(items)
+
+iteml = root.createElement('item')
+iteml.setAttribute('name','iteml')
+iteml.setAttribute('price','5')
+items.appendChild(iteml)
+itemlText = root.createTextNode("book")
+iteml.appendChild(itemlText)
+
+item2 = root.createElement('item')
+item2.setAttribute('name','item2')
+item2.setAttribute('price','15')
+items.appendChild(item2)
+item2Text = root.createTextNode("chair")
+item2.appendChild(item2Text)
+
+item3 = root.createElement('item')
+item3.setAttribute('name','item3')
+item3.setAttribute('price','20')
+items.appendChild(item3)
+item3Text = root.createTextNode("window")
+item3.appendChild(item3Text)
+
+mydata = root.toprettyxml(indent = "\t")
+myxmlfile = open("ListItem.xml", "w")
+myxmlfile.write(mydata)
+myxmlfile.close()
+print("Da tao tap tin xml")
