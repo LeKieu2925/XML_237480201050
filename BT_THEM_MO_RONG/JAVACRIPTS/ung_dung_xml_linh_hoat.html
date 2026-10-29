@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng dụng quản lý dữ liệu XML</title>
+    <style>
+        /* 1. Giao dien chung */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 15px;
+            background: #f4f4f9;
+            color: #263238;
+        }
+
+        h2, h3 { color: #2c3e50; }
+
+        .section, .card {
+            background: white;
+            padding: 18px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px #00000014;
+        }
+
+        /* 2. Form nhap lieu */
+        .form-group { margin-bottom: 12px; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 600px;
+            padding: 9px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* 3. Nut chuc nang */
+        button {
+            padding: 9px 14px;
+            margin: 4px 3px 4px 0;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover { opacity: .85; }
+        button:disabled { opacity: .5; cursor: not-allowed; }
+
+        .btn-add      { background: #27ae60; }
+        .btn-edit     { background: #2980b9; }
+        .btn-delete   { background: #e74c3c; }
+        .btn-download { background: #e67e22; }
+        .btn-import   { background: #8e44ad; }
+        .btn-cancel   { background: #7f8c8d; }
+
+        /* 4. Thong ke va tim kiem */
+        .stats, .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .stats { gap: 12px; }
+
+        .stat-box {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: #eaf2f8;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2980b9;
+        }
+
+        .toolbar { gap: 10px; align-items: center; }
+
+        .toolbar input, .toolbar select {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        /* 5. Hien thi ban ghi */
+        .card {
+            border-left: 5px solid #3498db;
+            overflow-wrap: anywhere;
+        }
+
+        .record-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .field-line { margin: 8px 0; }
+        .field-name { font-weight: bold; }
+        .empty { color: #7f8c8d; font-style: italic; }
+        .muted { color: #607d8b; font-size: 14px; }
+
+        #message { font-weight: bold; margin-top: 10px; }
+
+        /* Tuong thich dien thoai */
+        @media (max-width: 600px) {
+            body { margin: 15px auto; }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Ứng dụng quản lý dữ liệu XML</h2>
+    <!-- 1. Quan ly file XML -->
+    <div class="section">
+        <h3>Quản lý file XML</h3>
+        <input type="file" id="xml-file" accept=".xml,text/xml,application/xml">
+        <p id="file-info" class="muted">Chưa chọn file XML.</p>
+        <button class="btn-import" type="button" onclick="importXML()">
+            Đọc file XML đã chọn
+        </button>
+        <button class="btn-download" type="button" onclick="downloadXML()">
+            Tải file XML
+        </button>
+        <p class="empty">
+            Chọn file XML có một thẻ gốc và các phần tử dữ liệu bên trong.
+        </p>
+    </div>
+    <!-- 2. Thong ke -->
+    <div class="section">
+        <h3>Thống kê dữ liệu</h3>
+        <div class="stats">
+            <div class="stat-box">
+                Tổng bản ghi
+                <div class="stat-number" id="total-records">0</div>
+            </div>
+            <div class="stat-box">
+                Số loại thẻ dữ liệu
+                <div class="stat-number" id="total-fields">0</div>
+            </div>
+        </div>
+        <p id="xml-structure" class="muted"></p>
+    </div>
+    <!-- 3. Them va sua ban ghi -->
+    <div class="section">
+        <h3 id="form-title">Thêm bản ghi</h3>
+        <p id="form-help" class="muted">
+            Hãy đọc file XML trước. Các trường nhập liệu sẽ được tạo tự động.
+        </p>
+        <form id="record-form" onsubmit="saveRecord(event)">
+            <div id="dynamic-fields"></div>
+
+            <button type="submit" class="btn-add" id="btn-save" disabled>
+                Thêm bản ghi
+            </button>
+            <button type="button" class="btn-cancel" id="btn-cancel"
+                    onclick="cancelEdit()" hidden>
+                Hủy sửa
+            </button>
+        </form>
+
+        <div id="message" role="status"></div>
+    </div>
+
+    <!-- 4. Tim kiem va loc -->
+    <div class="section">
+        <h3>Tìm kiếm dữ liệu</h3>
+
+        <div class="toolbar">
+            <input type="text" id="search-input"
+                   placeholder="Tìm trong tất cả dữ liệu..."
+                   oninput="renderRecords()">
+
+            <select id="field-filter" onchange="renderRecords()">
+                <option value="ALL">Tất cả thẻ dữ liệu</option>
+            </select>
+        </div>
+    </div>
+    <!-- 5. Danh sach ban ghi -->
+    <div class="section">
+        <h3>Danh sách bản ghi</h3>
+        <div id="record-list">
+            <p class="empty">Vui lòng chọn và đọc một file XML.</p>
+        </div>
+    </div>
+
+    <script>
+        // A. Bien dung chung
+        const parser = new DOMParser();
+        let xmlDoc = null;                 // Tai lieu XML dang xu ly
+        let selectedFileName = "dulieu.xml"; // Ten file da chon
+        let recordTag = "";                // Ten the ban ghi
+        let editingRecord = null;           // Ban ghi dang sua
+        let fieldNames = [];              // Ten cac the du lieu
+        // B. Ham ho tro xu ly XML va giao dien
+        const $ = id => document.getElementById(id);
+
+        // Lay cac the con truc tiep
+        function getElementChildren(element) {
+            return Array.from(element.children || []);
+        }
+
+        // Lay cac ban ghi nam truc tiep trong the goc
+        function getRecords() {
+            return xmlDoc ? getElementChildren(xmlDoc.documentElement) : [];
+        }
+
+        // Lay cac ten the du lieu khong trung nhau
+        function getAllFieldNames() {
+            return [...new Set(
+                getRecords().flatMap(record =>
+                    getElementChildren(record).map(child => child.tagName)
+                )
+            )];
+        }
+        // Kiem tra cu phap XML
+        function isValidXML(doc) {
+            return !!doc?.documentElement &&
+                doc.getElementsByTagName("parsererror").length === 0;
+        }
+        // Lay noi dung the con theo ten
+        function getChildText(record, tagName) {
+            const child = getElementChildren(record)
+                .find(node => node.tagName === tagName);
+
+            return child ? child.textContent : "";
+        }
+        // Tao phan tu HTML voi class va noi dung
+        function createElement(tag, className = "", text = "") {
+            const element = document.createElement(tag);
+            if (className) element.className = className;
+            element.textContent = text;
+            return element;
+        }
+        // C. Doc file XML do nguoi dung chon
+        function importXML() {
+            const file = $("xml-file").files[0];
+            if (!file) {
+                alert("Vui lòng chọn một file XML trước.");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function () {
+                const doc = parser.parseFromString(reader.result, "text/xml");
+                if (!isValidXML(doc)) {
+                    alert("File không đúng cú pháp XML.");
+                    return;
+                }
+                const records = getElementChildren(doc.documentElement);
+
+                if (!records.length) {
+                    alert("Thẻ gốc không có bản ghi dữ liệu.");
+                    return;
+                }
+                // Luu tai lieu, ten file va ten the ban ghi
+                xmlDoc = doc;
+                selectedFileName = file.name;
+                recordTag = records[0].tagName;
+                editingRecord = null;
+                fieldNames = getAllFieldNames();
+                $("file-info").textContent = "File đang dùng: " + file.name;
+                $("search-input").value = "";
+                cancelEdit();
+                refreshDisplay();
+                showMessage("Đã đọc file " + file.name + " thành công.");
+            };
+            reader.onerror = () => alert("Không thể đọc file XML.");
+            reader.readAsText(file, "UTF-8");
+        }
+        // D. Cap nhat thong ke va giao dien
+        function refreshDisplay() {
+            if (!xmlDoc) return;
+            fieldNames = getAllFieldNames();
+            $("total-records").textContent = getRecords().length;
+            $("total-fields").textContent = fieldNames.length;
+            $("xml-structure").textContent =
+                "Thẻ gốc: <" + xmlDoc.documentElement.tagName + "> | " +
+                "Thẻ bản ghi: <" + recordTag + "> | " +
+                "Các thẻ dữ liệu: " +
+                (fieldNames.join(", ") || "không có");
+            updateFieldFilter();
+            buildForm();
+            renderRecords();
+        }
+        // Cap nhat danh sach loc theo ten the
+        function updateFieldFilter() {
+            const select = $("field-filter");
+            const oldValue = select.value;
+            select.replaceChildren(
+                createElement("option", "", "Tất cả thẻ dữ liệu")
+            );
+            select.options[0].value = "ALL";
+
+            fieldNames.forEach(name => {
+                const option = createElement("option", "", name);
+                option.value = name;
+                select.appendChild(option);
+            });
+
+            select.value = fieldNames.includes(oldValue) ? oldValue : "ALL";
+        }
+        // E. Tao form tu dong theo cac the du lieu
+        function buildForm(record = null) {
+            const container = $("dynamic-fields");
+            container.replaceChildren();
+
+            fieldNames.forEach(name => {
+                const group = createElement("div", "form-group");
+                const inputId = "field-" + name;
+                const label = createElement("label", "", name + ":");
+                const input = createElement("input");
+
+                label.htmlFor = inputId;
+                input.id = inputId;
+                input.dataset.tag = name;
+                input.type = "text";
+                input.placeholder = "Nhập " + name;
+                input.value = record ? getChildText(record, name) : "";
+                input.maxLength = 1000;
+
+                group.append(label, input);
+                container.appendChild(group);
+            });
+
+            $("btn-save").disabled = !xmlDoc || !fieldNames.length;
+        }
+        // F. Tim kiem, loc va hien thi ban ghi
+        function renderRecords() {
+            const list = $("record-list");
+            list.replaceChildren();
+            if (!xmlDoc) {
+                list.appendChild(createElement(
+                    "p", "empty", "Vui lòng chọn và đọc một file XML."
+                ));
+                return;
+            }
+            const keyword = $("search-input").value.trim().toLowerCase();
+            const selectedField = $("field-filter").value;
+            // Loc theo noi dung, thuoc tinh va ten the
+            const records = getRecords().filter(record => {
+                const textMatch = record.textContent.toLowerCase().includes(keyword) ||
+                    Array.from(record.attributes).some(attr =>
+                        (attr.name + " " + attr.value).toLowerCase().includes(keyword)
+                    );
+                const fieldMatch = selectedField === "ALL" ||
+                    getElementChildren(record).some(
+                        child => child.tagName === selectedField
+                    );
+                return textMatch && fieldMatch;
+            });
+            if (!records.length) {
+                list.appendChild(createElement(
+                    "p", "empty", "Không tìm thấy dữ liệu phù hợp."
+                ));
+                return;
+            }
+            records.forEach((record, index) => {
+                const card = createElement("div", "card");
+                const id = record.getAttribute("id");
+                // Tieu de ban ghi
+                card.appendChild(createElement(
+                    "div", "record-title",
+                    "<" + record.tagName + ">" +
+                    (id !== null ? " (id: " + id + ")" : " (bản ghi " + (index + 1) + ")")
+                ));
+                // Hien thi cac thuoc tinh
+                Array.from(record.attributes).forEach(attr => {
+                    const line = createElement("div", "field-line");
+                    line.append(
+                        createElement("span", "field-name", "@" + attr.name + ": "),
+                        document.createTextNode(attr.value)
+                    );
+                    card.appendChild(line);
+                });
+                // Hien thi cac the con, ke ca the long nhau
+                getElementChildren(record).forEach(child => {
+                    const line = createElement("div", "field-line");
+                    line.appendChild(createElement(
+                        "span", "field-name", child.tagName + ": "
+                    ));
+                    if (getElementChildren(child).length) {
+                        const nested = createElement("div");
+                        nested.style.marginLeft = "18px";
+                        nested.appendChild(renderNestedXML(child));
+                        line.appendChild(nested);
+                    } else {
+                        line.appendChild(document.createTextNode(child.textContent));
+                    }
+
+                    card.appendChild(line);
+                });
+                // Nut sua va xoa ban ghi
+                const edit = createElement("button", "btn-edit", "Sửa");
+                edit.onclick = () => editRecord(record);
+
+                const del = createElement("button", "btn-delete", "Xóa");
+                del.onclick = () => deleteRecord(record);
+
+                card.append(edit, del);
+                list.appendChild(card);
+            });
+        }
+        // Hien thi de quy cac the XML long nhau
+        function renderNestedXML(element) {
+            const wrapper = createElement("div");
+            getElementChildren(element).forEach(child => {
+                const line = createElement("div");
+                line.appendChild(createElement(
+                    "span", "field-name", child.tagName + ": "
+                ));
+                if (getElementChildren(child).length) {
+                    line.appendChild(renderNestedXML(child));
+                } else {
+                    line.appendChild(document.createTextNode(child.textContent));
+                }
+                wrapper.appendChild(line);
+            });
+            return wrapper;
+        }
+        // G. Them moi hoac luu thay doi ban ghi
+        function saveRecord(event) {
+            event.preventDefault();
+            if (!xmlDoc) {
+                alert("Vui lòng chọn file XML trước.");
+                return;
+            }
+            if (!fieldNames.length) {
+                alert("Không tìm thấy thẻ dữ liệu để tạo biểu mẫu.");
+                return;
+            }
+            // Lay gia tri tu form
+            const values = {};
+            document.querySelectorAll("#dynamic-fields input").forEach(input => {
+                values[input.dataset.tag] = input.value.trim();
+            });
+            let record = editingRecord;
+            if (!record) {
+                record = xmlDoc.createElement(recordTag || "record");
+                // Neu ban ghi co id, tao id tiep theo
+                const records = getRecords();
+                if (records.some(item => item.hasAttribute("id"))) {
+                    const ids = records.map(item => Number(item.getAttribute("id")))
+                        .filter(Number.isFinite);
+
+                    record.setAttribute("id", Math.max(0, ...ids) + 1);
+                }
+            }
+            // Cap nhat cac the con hoac tao the con moi
+            fieldNames.forEach(name => {
+                let child = getElementChildren(record)
+                    .find(node => node.tagName === name);
+
+                if (!child) {
+                    child = xmlDoc.createElement(name);
+                    record.appendChild(child);
+                }
+
+                child.textContent = values[name] || "";
+            });
+            // Chi them vao XML khi tao ban ghi moi
+            if (!editingRecord) {
+                xmlDoc.documentElement.appendChild(record);
+                showMessage("Đã thêm bản ghi mới.");
+            } else {
+                showMessage("Đã cập nhật bản ghi.");
+            }
+
+            cancelEdit();
+            refreshDisplay();
+        }
+        // H. Sua va huy sua ban ghi
+        function editRecord(record) {
+            editingRecord = record;
+            buildForm(record);
+            $("form-title").textContent = "Cập nhật bản ghi";
+            $("btn-save").textContent = "Lưu thay đổi";
+            $("btn-save").className = "btn-edit";
+            $("btn-cancel").hidden = false;
+
+            $("record-form").scrollIntoView({ behavior: "smooth" });
+        }
+        function cancelEdit() {
+            editingRecord = null;
+            $("form-title").textContent = "Thêm bản ghi";
+            $("btn-save").textContent = "Thêm bản ghi";
+            $("btn-save").className = "btn-add";
+            $("btn-cancel").hidden = true;
+
+            if (xmlDoc) buildForm();
+        }
+        // I. Xoa ban ghi
+        function deleteRecord(record) {
+            const id = record.getAttribute("id");
+            const label = id !== null ? " có id=" + id : "";
+            if (!confirm("Bạn có chắc muốn xóa bản ghi" + label + "?")) return;
+            if (editingRecord === record) cancelEdit();
+            record.parentNode.removeChild(record);
+            refreshDisplay();
+            showMessage("Đã xóa bản ghi.");
+        }
+        // J. Xuat va tai file XML
+        function downloadXML() {
+            if (!xmlDoc) {
+                alert("Vui lòng chọn và đọc file XML trước khi tải.");
+                return;
+            }
+            const xmlText = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+                new XMLSerializer().serializeToString(xmlDoc);
+            const blob = new Blob([xmlText], {
+                type: "application/xml;charset=utf-8"
+            });
+            const url = URL.createObjectURL(blob);
+            const link = createElement("a");
+            link.href = url;
+            link.download = selectedFileName.toLowerCase().endsWith(".xml")
+                ? selectedFileName
+                : selectedFileName + ".xml";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            // Giai phong URL tam
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showMessage("Đã tải dữ liệu XML.");
+        }
+        // K. Hien thi thong bao
+        function showMessage(message) {
+            $("message").textContent = message;
+        }
+    </script>
+</body>
+</html>

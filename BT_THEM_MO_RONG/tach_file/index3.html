@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng dụng quản lý dữ liệu XML</title>
+    <!-- Ket noi file CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h2>Ứng dụng quản lý dữ liệu XML</h2>
+    <!-- 1. Quan ly file XML -->
+    <section class="section">
+        <h3>Quản lý file XML</h3>
+        <input type="file" id="xml-file" accept=".xml,text/xml,application/xml">
+        <p id="file-info" class="muted">Chưa chọn file XML.</p>
+        <button class="btn-import" type="button" onclick="importXML()">
+            Đọc file XML đã chọn
+        </button>
+        <button class="btn-download" type="button" onclick="downloadXML()">
+            Tải file XML
+        </button>
+        <p class="empty">
+            Chọn file XML có một thẻ gốc và các phần tử dữ liệu bên trong.
+        </p>
+    </section>
+    <!-- 2. Thong ke du lieu -->
+    <section class="section">
+        <h3>Thống kê dữ liệu</h3>
+        <div class="stats">
+            <div class="stat-box">
+                Tổng bản ghi
+                <div class="stat-number" id="total-records">0</div>
+            </div>
+            <div class="stat-box">
+                Số loại thẻ dữ liệu
+                <div class="stat-number" id="total-fields">0</div>
+            </div>
+        </div>
+        <p id="xml-structure" class="muted"></p>
+    </section>
+    <!-- 3. Them va sua ban ghi -->
+    <section class="section">
+        <h3 id="form-title">Thêm bản ghi</h3>
+        <p class="muted" id="form-help">
+            Hãy đọc file XML trước. Các trường nhập liệu sẽ được tạo tự động.
+        </p>
+        <form id="record-form" onsubmit="saveRecord(event)">
+            <!-- Cac truong nhap duoc tao bang JavaScript -->
+            <div id="dynamic-fields"></div>
+            <button type="submit" class="btn-add" id="btn-save" disabled>
+                Thêm bản ghi
+            </button>
+            <button type="button" class="btn-cancel" id="btn-cancel"
+                    onclick="cancelEdit()" hidden>
+                Hủy sửa
+            </button>
+        </form>
+        <div id="message" role="status"></div>
+    </section>
+    <!-- 4. Tim kiem va loc du lieu -->
+    <section class="section">
+        <h3>Tìm kiếm dữ liệu</h3>
+        <div class="toolbar">
+            <input type="text" id="search-input"
+                   placeholder="Tìm trong tất cả dữ liệu..."
+                   oninput="renderRecords()">
+            <select id="field-filter" onchange="renderRecords()">
+                <option value="ALL">Tất cả thẻ dữ liệu</option>
+            </select>
+        </div>
+    </section>
+    <!-- 5. Danh sach ban ghi -->
+    <section class="section">
+        <h3>Danh sách bản ghi</h3>
+        <div id="record-list">
+            <p class="empty">Vui lòng chọn và đọc một file XML.</p>
+        </div>
+    </section>
+    <!-- Ket noi file JavaScript; dat cuoi body de HTML duoc tao truoc -->
+    <script src="script.js"></script>
+</body>
+</html>

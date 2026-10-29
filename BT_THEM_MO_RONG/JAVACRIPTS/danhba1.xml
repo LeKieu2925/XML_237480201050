@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <directory>
+        <contact id="1">
+            <name>Nguyễn Văn C</name>
+            <phone>0901234567</phone>
+            <email>nvc@gmail.com</email>
+            <group>Công việc</group>
+            <tenkhac>ANH C</tenkhac>
+        </contact>
+        <contact id="2">
+            <name>Trần Thị D</name>
+            <phone>0987654321</phone>
+            <email>ttd@gmail.com</email>
+            <group>Gia đình</group>
+            <tenkhac>CHỊ D</tenkhac>
+        </contact>
+    </directory>

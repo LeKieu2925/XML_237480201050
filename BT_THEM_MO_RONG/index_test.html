@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng dụng Danh bạ XML</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px auto;
+            padding: 0 15px;
+            max-width: 1000px;
+            background: #f4f4f9;
+        }
+
+        h2, h3 {
+            color: #2c3e50;
+        }
+
+        .section, .card {
+            background: white;
+            padding: 18px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            box-sizing: border-box;
+            padding: 9px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 9px 14px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin: 4px 3px 4px 0;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+
+        .btn-add { background: #27ae60; }
+        .btn-edit { background: #2980b9; }
+        .btn-delete { background: #e74c3c; }
+        .btn-download { background: #e67e22; }
+        .btn-import { background: #8e44ad; }
+        .btn-cancel { background: #7f8c8d; }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .stat-box {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: #eaf2f8;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2980b9;
+        }
+
+        .card {
+            border-left: 5px solid #3498db;
+        }
+
+        .name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 4px 9px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .empty {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toolbar input, .toolbar select {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        #message {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 15px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Ứng dụng Danh bạ Cá nhân XML</h2>
+
+    <!-- Thong ke danh ba -->
+    <div class="section">
+        <h3>Thống kê danh bạ</h3>
+        <div class="stats">
+            <div class="stat-box">
+                Tổng liên hệ
+                <div class="stat-number" id="total-contacts">0</div>
+            </div>
+
+            <div class="stat-box">
+                Số nhóm
+                <div class="stat-number" id="total-groups">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form them va sua lien he -->
+    <div class="section">
+        <h3 id="form-title">Thêm liên hệ mới</h3>
+
+        <form id="contact-form" onsubmit="saveContact(event)">
+            <div class="form-group">
+                <label for="input-name">Họ và tên:</label>
+                <input type="text" id="input-name"
+                    required maxlength="100"
+                    placeholder="Nhập họ và tên">
+            </div>
+
+            <div class="form-group">
+                <label for="input-phone">Số điện thoại:</label>
+                <input type="tel" id="input-phone"
+                    required maxlength="20"
+                    placeholder="Nhập số điện thoại">
+            </div>
+
+            <div class="form-group">
+                <label for="input-email">Email:</label>
+                <input type="email" id="input-email"
+                    required maxlength="150"
+                    placeholder="Nhập email">
+            </div>
+
+            <div class="form-group">
+                <label for="input-group">Nhóm:</label>
+                <input type="text" id="input-group"
+                    required maxlength="50"
+                    placeholder="Công việc, Gia đình...">
+            </div>
+
+            <button type="submit" class="btn-add" id="btn-save">
+                Thêm liên hệ
+            </button>
+
+            <button type="button" class="btn-cancel"
+                id="btn-cancel" onclick="cancelEdit()" hidden>
+                Hủy sửa
+            </button>
+        </form>
+
+        <div id="message" role="status"></div>
+    </div>
+
+    <!-- Tim kiem va loc -->
+    <div class="section">
+        <h3>Tìm kiếm và lọc liên hệ</h3>
+
+        <div class="toolbar">
+            <input type="text" id="search-input"
+                placeholder="Tìm theo tên, SĐT hoặc email..."
+                oninput="renderContacts()">
+
+            <select id="group-select" onchange="renderContacts()">
+                <option value="ALL">Tất cả nhóm</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Quan ly file XML -->
+    <div class="section">
+        <h3>Quản lý file XML</h3>
+
+        <button class="btn-download" onclick="downloadXML()">
+            Tải file XML
+        </button>
+
+        <button class="btn-import" onclick="chooseXMLFile()">
+            Nhập file XML
+        </button>
+
+        <input type="file" id="xml-file"
+            accept=".xml,text/xml,application/xml"
+            hidden onchange="importXML(event)">
+
+        <p class="empty">
+            Dữ liệu được chỉnh sửa trên bộ nhớ của trình duyệt.
+            Hãy tải file XML để lưu lại dữ liệu hoặc nhập file đã có.
+        </p>
+    </div>
+
+    <!-- Danh sach lien he -->
+    <div class="section">
+        <h3>Danh sách liên hệ</h3>
+        <div id="contact-list"></div>
+    </div>
+
+    <script>
+        // 1. Khoi tao du lieu XML ban dau
+        const initialXML = `<?xml version="1.0" encoding="UTF-8"?>
+        <directory>
+            <contact id="1">
+                <name>Nguyễn Văn A</name>
+                <phone>0901234567</phone>
+                <email>nva@gmail.com</email>
+                <group>Công việc</group>
+            </contact>
+            <contact id="2">
+                <name>Trần Thị B</name>
+                <phone>0987654321</phone>
+                <email>ttb@gmail.com</email>
+                <group>Gia đình</group>
+            </contact>
+        </directory>`;
+
+        const parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(initialXML, "text/xml");
+        let editingId = null;
+
+        // Kiem tra XML co hop le khong
+        function isValidXML(doc) {
+            return doc.documentElement &&
+                doc.documentElement.tagName === "directory" &&
+                doc.getElementsByTagName("parsererror").length === 0;
+        }
+
+        // Tao the con trong XML DOM
+        function createTextElement(tagName, value) {
+            const element = xmlDoc.createElement(tagName);
+            element.textContent = value;
+            return element;
+        }
+
+        // Lay gia tri cua the con
+        function getValue(contact, tagName) {
+            const element = contact.getElementsByTagName(tagName)[0];
+            return element ? element.textContent : "";
+        }
+
+        // Lay tat ca lien he
+        function getContacts() {
+            return Array.from(xmlDoc.getElementsByTagName("contact"));
+        }
+
+        // Tao danh sach nhom duy nhat
+        function updateGroupFilter() {
+            const select = document.getElementById("group-select");
+            const oldValue = select.value;
+            const groups = new Set();
+
+            getContacts().forEach(contact => {
+                const group = getValue(contact, "group").trim();
+                if (group) {
+                    groups.add(group);
+                }
+            });
+
+            select.innerHTML = "";
+
+            const allOption = document.createElement("option");
+            allOption.value = "ALL";
+            allOption.textContent = "Tất cả nhóm";
+            select.appendChild(allOption);
+
+            Array.from(groups).sort().forEach(group => {
+                const option = document.createElement("option");
+                option.value = group;
+                option.textContent = group;
+                select.appendChild(option);
+            });
+
+            select.value = groups.has(oldValue) ? oldValue : "ALL";
+        }
+
+        // Cap nhat thong ke
+        function updateStatistics() {
+            document.getElementById("total-contacts").textContent =
+                getContacts().length;
+
+            document.getElementById("total-groups").textContent =
+                new Set(
+                    getContacts().map(contact =>
+                        getValue(contact, "group").trim()
+                    ).filter(Boolean)
+                ).size;
+        }
+
+        // Hien thi danh sach, tim kiem va loc
+        function renderContacts() {
+            const list = document.getElementById("contact-list");
+            const keyword = document.getElementById("search-input")
+                .value.trim().toLowerCase();
+            const selectedGroup = document.getElementById("group-select").value;
+
+            list.innerHTML = "";
+
+            const contacts = getContacts().filter(contact => {
+                const name = getValue(contact, "name").toLowerCase();
+                const phone = getValue(contact, "phone").toLowerCase();
+                const email = getValue(contact, "email").toLowerCase();
+                const group = getValue(contact, "group");
+
+                const matchesKeyword =
+                    name.includes(keyword) ||
+                    phone.includes(keyword) ||
+                    email.includes(keyword);
+
+                const matchesGroup =
+                    selectedGroup === "ALL" || group === selectedGroup;
+
+                return matchesKeyword && matchesGroup;
+            });
+
+            if (contacts.length === 0) {
+                const p = document.createElement("p");
+                p.className = "empty";
+                p.textContent = "Không tìm thấy liên hệ phù hợp.";
+                list.appendChild(p);
+                return;
+            }
+
+            contacts.forEach(contact => {
+                const id = contact.getAttribute("id");
+                const name = getValue(contact, "name");
+                const phone = getValue(contact, "phone");
+                const email = getValue(contact, "email");
+                const group = getValue(contact, "group");
+
+                const card = document.createElement("div");
+                card.className = "card";
+
+                const title = document.createElement("div");
+                title.className = "name";
+                title.appendChild(document.createTextNode(name + " "));
+
+                const badge = document.createElement("span");
+                badge.className = "badge";
+                badge.textContent = group;
+                title.appendChild(badge);
+
+                const phoneLine = document.createElement("p");
+                phoneLine.textContent = "SĐT: " + phone;
+
+                const emailLine = document.createElement("p");
+                emailLine.textContent = "Email: " + email;
+
+                const editButton = document.createElement("button");
+                editButton.className = "btn-edit";
+                editButton.textContent = "Sửa";
+                editButton.onclick = () => editContact(id);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.className = "btn-delete";
+                deleteButton.textContent = "Xóa";
+                deleteButton.onclick = () => deleteContact(id);
+
+                card.appendChild(title);
+                card.appendChild(phoneLine);
+                card.appendChild(emailLine);
+                card.appendChild(editButton);
+                card.appendChild(deleteButton);
+
+                list.appendChild(card);
+            });
+        }
+
+        // Cap nhat toan bo giao dien
+        function refreshDisplay() {
+            updateGroupFilter();
+            updateStatistics();
+            renderContacts();
+        }
+
+        // Kiem tra du lieu nhap
+        function validateContact(name, phone, email, group) {
+            if (!name || !phone || !email || !group) {
+                alert("Vui lòng nhập đầy đủ thông tin.");
+                return false;
+            }
+
+            const phonePattern = /^[0-9+().\-\s]{8,20}$/;
+
+            if (!phonePattern.test(phone)) {
+                alert("Số điện thoại không hợp lệ.");
+                return false;
+            }
+
+            return true;
+        }
+
+        // Them moi hoac cap nhat lien he
+        function saveContact(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("input-name")
+                .value.trim();
+            const phone = document.getElementById("input-phone")
+                .value.trim();
+            const email = document.getElementById("input-email")
+                .value.trim();
+            const group = document.getElementById("input-group")
+                .value.trim();
+
+            if (!validateContact(name, phone, email, group)) {
+                return;
+            }
+
+            if (editingId !== null) {
+                // Tim lien he can sua
+                const contact = getContacts().find(item =>
+                    item.getAttribute("id") === editingId
+                );
+
+                if (!contact) {
+                    alert("Không tìm thấy liên hệ cần sửa.");
+                    cancelEdit();
+                    return;
+                }
+
+                contact.getElementsByTagName("name")[0].textContent = name;
+                contact.getElementsByTagName("phone")[0].textContent = phone;
+                contact.getElementsByTagName("email")[0].textContent = email;
+                contact.getElementsByTagName("group")[0].textContent = group;
+
+                showMessage("Cập nhật liên hệ thành công!");
+            } else {
+                // Tao ID moi khong trung voi ID cu
+                const ids = getContacts().map(contact =>
+                    Number(contact.getAttribute("id"))
+                ).filter(Number.isFinite);
+
+                const newId = String(
+                    Math.max(0, ...ids) + 1
+                );
+
+                // Tao nut contact va cac the con
+                const newContact = xmlDoc.createElement("contact");
+                newContact.setAttribute("id", newId);
+
+                newContact.appendChild(createTextElement("name", name));
+                newContact.appendChild(createTextElement("phone", phone));
+                newContact.appendChild(createTextElement("email", email));
+                newContact.appendChild(createTextElement("group", group));
+
+                xmlDoc.documentElement.appendChild(newContact);
+
+                showMessage("Thêm liên hệ thành công!");
+            }
+
+            document.getElementById("contact-form").reset();
+            cancelEdit(false);
+            refreshDisplay();
+        }
+
+        // Nap thong tin len form de sua
+        function editContact(id) {
+            const contact = getContacts().find(item =>
+                item.getAttribute("id") === id
+            );
+
+            if (!contact) {
+                alert("Không tìm thấy liên hệ.");
+                return;
+            }
+
+            editingId = id;
+
+            document.getElementById("input-name").value =
+                getValue(contact, "name");
+            document.getElementById("input-phone").value =
+                getValue(contact, "phone");
+            document.getElementById("input-email").value =
+                getValue(contact, "email");
+            document.getElementById("input-group").value =
+                getValue(contact, "group");
+
+            document.getElementById("form-title").textContent =
+                "Cập nhật liên hệ";
+            document.getElementById("btn-save").textContent =
+                "Lưu thay đổi";
+            document.getElementById("btn-save").className = "btn-edit";
+            document.getElementById("btn-cancel").hidden = false;
+
+            document.getElementById("contact-form").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+        // Huy che do sua
+        function cancelEdit(clearForm = true) {
+            editingId = null;
+
+            if (clearForm) {
+                document.getElementById("contact-form").reset();
+            }
+
+            document.getElementById("form-title").textContent =
+                "Thêm liên hệ mới";
+            document.getElementById("btn-save").textContent =
+                "Thêm liên hệ";
+            document.getElementById("btn-save").className = "btn-add";
+            document.getElementById("btn-cancel").hidden = true;
+        }
+
+        // Xoa lien he khoi XML DOM
+        function deleteContact(id) {
+            const contact = getContacts().find(item =>
+                item.getAttribute("id") === id
+            );
+
+            if (!contact) {
+                alert("Không tìm thấy liên hệ.");
+                return;
+            }
+
+            const name = getValue(contact, "name");
+
+            if (!confirm("Bạn có chắc muốn xóa liên hệ " + name + "?")) {
+                return;
+            }
+
+            contact.parentNode.removeChild(contact);
+
+            if (editingId === id) {
+                cancelEdit();
+            }
+
+            showMessage("Đã xóa liên hệ thành công!");
+            refreshDisplay();
+        }
+
+        // Hien thi thong bao
+        function showMessage(message) {
+            document.getElementById("message").textContent = message;
+        }
+
+        // Tai file XML ve may
+        function downloadXML() {
+            const serializer = new XMLSerializer();
+            const xmlText = serializer.serializeToString(xmlDoc);
+
+            const blob = new Blob(
+                ['<?xml version="1.0" encoding="UTF-8"?>\n' + xmlText],
+                { type: "application/xml;charset=utf-8" }
+            );
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = "contacts.xml";
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(url);
+            showMessage("Đã tạo file contacts.xml để tải xuống.");
+        }
+
+        // Mo hop thoai chon file XML
+        function chooseXMLFile() {
+            document.getElementById("xml-file").click();
+        }
+
+        // Doc va nhap file XML tu may tinh
+        function importXML(event) {
+            const file = event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                const importedDoc = parser.parseFromString(
+                    reader.result,
+                    "text/xml"
+                );
+
+                if (!isValidXML(importedDoc)) {
+                    alert("File XML không hợp lệ hoặc thiếu thẻ directory.");
+                    return;
+                }
+
+                // Kiem tra cau truc tung lien he truoc khi nhap
+                const contacts = Array.from(
+                    importedDoc.getElementsByTagName("contact")
+                );
+
+                const ids = new Set();
+
+                for (const contact of contacts) {
+                    const id = contact.getAttribute("id");
+                    const requiredTags = ["name", "phone", "email", "group"];
+
+                    if (!id || ids.has(id)) {
+                        alert("File XML có ID bị thiếu hoặc trùng.");
+                        return;
+                    }
+
+                    ids.add(id);
+
+                    for (const tag of requiredTags) {
+                        if (!contact.getElementsByTagName(tag)[0]) {
+                            alert("Liên hệ thiếu thẻ " + tag + ".");
+                            return;
+                        }
+                    }
+                }
+
+                // Chi thay du lieu khi file da duoc kiem tra
+                xmlDoc = importedDoc;
+                cancelEdit();
+                document.getElementById("search-input").value = "";
+
+                refreshDisplay();
+                showMessage("Nhập file XML thành công!");
+            };
+
+            reader.onerror = function () {
+                alert("Không thể đọc file XML.");
+            };
+
+            reader.readAsText(file, "UTF-8");
+
+            // Cho phep chon lai cung mot file
+            event.target.value = "";
+        }
+
+        // Khoi tao ung dung
+        refreshDisplay();
+    </script>
+
+</body>
+</html>

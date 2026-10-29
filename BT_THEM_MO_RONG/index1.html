@@ -1,0 +1,296 @@
+<!-- Dưới đây là hướng dẫn chi tiết cách nâng cấp ứng dụng danh bạ XML:
+
+Thêm form nhập thông tin liên hệ mới (Tên, SĐT, Email, Nhóm).
+
+Cập nhật dữ liệu vào XML DOM Document.
+
+Thêm nút Tải file XML để xuất file XML chuẩn về máy tính. -->
+
+<!-- (Bổ sung tính năng Thêm & Tải file XML) -->
+!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ứng dụng Danh bạ XML - Thêm & Tải file XML</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background: #f4f4f9;
+            max-width: 650px;
+        }
+
+        .section {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 6px 10px;
+            font-size: 0.95em;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 220px;
+        }
+
+        button {
+            padding: 8px 15px;
+            font-size: 0.95em;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: #2ecc71;
+            color: white;
+            margin-top: 5px;
+        }
+
+        .btn-download {
+            background: #e67e22;
+            color: white;
+            float: right;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+
+        .empty {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Danh bạ Cá nhân XML</h2>
+
+    <!-- Form thêm liên hệ mới -->
+    <div class="section">
+        <h3>➕ Thêm liên hệ mới</h3>
+        <form id="add-contact-form" onsubmit="addContact(event)">
+            <div class="form-group">
+                <label>Họ và Tên:</label>
+                <input type="text" id="input-name" required placeholder="Nhập tên...">
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="tel" id="input-phone" required placeholder="Nhập SĐT...">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="input-email" required placeholder="Nhập email...">
+            </div>
+            <div class="form-group">
+                <label>Nhóm:</label>
+                <input type="text" id="input-group" required placeholder="Công việc, Gia đình...">
+            </div>
+            <button type="submit" class="btn-add">Thêm vào Danh bạ</button>
+        </form>
+    </div>
+
+    <!-- Thanh lọc & Nút Download -->
+    <div class="section clearfix">
+        <label for="group-select"><strong>Lọc nhóm: </strong></label>
+        <select id="group-select" onchange="filterContacts()">
+            <option value="ALL">Tất cả nhóm</option>
+        </select>
+
+        <!-- Nút tải file XML về máy -->
+        <button class="btn-download" onclick="downloadXML()">📥 Tải file contacts.xml</button>
+    </div>
+
+    <!-- Danh sách danh bạ -->
+    <div id="contact-list">Đang tải dữ liệu...</div>
+
+    <script>
+        // 1. Khởi tạo dữ liệu XML ban đầu
+        let xmlString = `<?xml version="1.0" encoding="UTF-8"?>
+        <directory>
+            <contact id="1">
+                <name>Nguyễn Văn A</name>
+                <phone>0901234567</phone>
+                <email>nva@gmail.com</email>
+                <group>Công việc</group>
+            </contact>
+            <contact id="2">
+                <name>Trần Thị B</name>
+                <phone>0987654321</phone>
+                <email>ttb@gmail.com</email>
+                <group>Gia đình</group>
+            </contact>
+        </directory>`;
+
+        const parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(xmlString, "text/xml");
+        let contactIdCounter = 3; // Biến đếm ID liên hệ tiếp theo
+
+        // 2. Cập nhật danh sách nhóm cho Dropdown
+        function updateGroupFilter() {
+            const select = document.getElementById("group-select");
+            const currentSelected = select.value;
+
+            // Xóa các option cũ ngoại trừ "Tất cả nhóm"
+            select.innerHTML = '<option value="ALL">Tất cả nhóm</option>';
+
+            const groups = xmlDoc.getElementsByTagName("group");
+            const uniqueGroups = new Set();
+
+            for (let i = 0; i < groups.length; i++) {
+                uniqueGroups.add(groups[i].textContent);
+            }
+
+            uniqueGroups.forEach(group => {
+                const option = document.createElement("option");
+                option.value = group;
+                option.textContent = group;
+                select.appendChild(option);
+            });
+
+            select.value = currentSelected;
+        }
+
+        // 3. Hàm hiển thị & lọc danh bạ
+        function filterContacts() {
+            const selectedGroup = document.getElementById("group-select").value;
+            const contacts = xmlDoc.getElementsByTagName("contact");
+            let htmlOutput = "";
+
+            for (let i = 0; i < contacts.length; i++) {
+                const group = contacts[i].getElementsByTagName("group")[0].textContent;
+
+                if (selectedGroup === "ALL" || group === selectedGroup) {
+                    const name = contacts[i].getElementsByTagName("name")[0].textContent;
+                    const phone = contacts[i].getElementsByTagName("phone")[0].textContent;
+                    const email = contacts[i].getElementsByTagName("email")[0].textContent;
+
+                    htmlOutput += `
+                        <div class="card">
+                            <div class="name">${name} <span class="badge">${group}</span></div>
+                            <div>📞 SĐT: ${phone}</div>
+                            <div>✉️ Email: ${email}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById("contact-list").innerHTML =
+                htmlOutput || `<p class="empty">Không có liên hệ nào trong nhóm này.</p>`;
+        }
+
+        // 4. THÊM LIÊN HỆ MỚI VÀO CÂY XML DOM
+        function addContact(event) {
+            event.preventDefault();
+
+            // Lấy dữ liệu từ form
+            const nameVal = document.getElementById("input-name").value;
+            const phoneVal = document.getElementById("input-phone").value;
+            const emailVal = document.getElementById("input-email").value;
+            const groupVal = document.getElementById("input-group").value;
+
+            // Tạo thẻ <contact id="..."> mới
+            const newContact = xmlDoc.createElement("contact");
+            newContact.setAttribute("id", contactIdCounter++);
+
+            // Tạo các thẻ con <name>, <phone>, <email>, <group>
+            const nameNode = xmlDoc.createElement("name");
+            nameNode.textContent = nameVal;
+
+            const phoneNode = xmlDoc.createElement("phone");
+            phoneNode.textContent = phoneVal;
+
+            const emailNode = xmlDoc.createElement("email");
+            emailNode.textContent = emailVal;
+
+            const groupNode = xmlDoc.createElement("group");
+            groupNode.textContent = groupVal;
+
+            // Đính kèm các thẻ con vào thẻ <contact>
+            newContact.appendChild(nameNode);
+            newContact.appendChild(phoneNode);
+            newContact.appendChild(emailNode);
+            newContact.appendChild(groupNode);
+
+            // Gắn thẻ <contact> mới vào thẻ gốc <directory>
+            xmlDoc.querySelector("directory").appendChild(newContact);
+
+            // Cập nhật lại giao diện và bộ lọc
+            updateGroupFilter();
+            filterContacts();
+
+            // Reset form
+            document.getElementById("add-contact-form").reset();
+            alert("Đã thêm liên hệ thành công vào XML!");
+        }
+
+        // 5. TẢI FILE XML VỀ MÁY TÍNH
+        function downloadXML() {
+            // Chuyển đối tượng XML DOM back thành chuỗi Text
+            const serializer = new XMLSerializer();
+            const xmlText = serializer.serializeToString(xmlDoc);
+
+            // Định dạng mã hóa thành Blob
+            const blob = new Blob([xmlText], { type: "text/xml;charset=utf-8;" });
+
+            // Tạo đường link ẩn để tải file
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "contacts.xml"; // Tên file khi tải về
+
+            // Tự động kích hoạt hành động nhấp tải file
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Chạy khởi tạo ban đầu
+        updateGroupFilter();
+        filterContacts();
+    </script>
+</body>
+
+</html>

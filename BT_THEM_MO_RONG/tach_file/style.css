@@ -1,0 +1,98 @@
+/* 1. Giao dien chung */
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 15px;
+    background: #f4f4f9;
+    color: #263238;
+}
+h2, h3 { color: #2c3e50; }
+/* Khung cac chuc nang */
+.section, .card {
+    background: white;
+    padding: 18px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px #00000014;
+}
+/* 2. Form nhap lieu */
+.form-group { margin-bottom: 12px; }
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+input, select, textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 600px;
+    padding: 9px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+/* 3. Nut chuc nang */
+button {
+    padding: 9px 14px;
+    margin: 4px 3px 4px 0;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+button:hover { opacity: .85; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.btn-add      { background: #27ae60; }
+.btn-edit     { background: #2980b9; }
+.btn-delete   { background: #e74c3c; }
+.btn-download { background: #e67e22; }
+.btn-import   { background: #8e44ad; }
+.btn-cancel   { background: #7f8c8d; }
+/* 4. Thong ke va tim kiem */
+.stats, .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+}
+.stats { gap: 12px; }
+.stat-box {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    background: #eaf2f8;
+    border-radius: 6px;
+    text-align: center;
+}
+.stat-number {
+    font-size: 25px;
+    font-weight: bold;
+    color: #2980b9;
+}
+.toolbar { gap: 10px; align-items: center; }
+
+.toolbar input, .toolbar select {
+    flex: 1;
+    min-width: 180px;
+}
+/* 5. Hien thi ban ghi */
+.card {
+    border-left: 5px solid #3498db;
+    overflow-wrap: anywhere;
+}
+.record-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.field-line { margin: 8px 0; }
+.field-name { font-weight: bold; }
+.empty { color: #7f8c8d; font-style: italic; }
+.muted { color: #607d8b; font-size: 14px; }
+#message {
+    font-weight: bold;
+    margin-top: 10px;
+}
+/* Tuong thich voi dien thoai */
+@media (max-width: 600px) {
+    body { margin: 15px auto; }
+}
